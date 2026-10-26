@@ -1,45 +1,68 @@
-#--------------------------#
-# Magento Default Files    #
-#--------------------------#
+# Magento 2 (composer project) — track only project code & config;
+# everything below is reinstalled by `composer install` or generated at runtime.
 
-/PATCH_*.sh
+# Composer
+/vendor/
+/auth.json
 
-/app/etc/local.xml
-
-/media/*
-!/media/.htaccess
-
-!/media/customer
-/media/customer/*
-!/media/customer/.htaccess
-
-!/media/dhl
-/media/dhl/*
-!/media/dhl/logo.jpg
-
-!/media/downloadable
-/media/downloadable/*
-!/media/downloadable/.htaccess
-
-!/media/xmlconnect
-/media/xmlconnect/*
-
-!/media/xmlconnect/custom
-/media/xmlconnect/custom/*
-!/media/xmlconnect/custom/ok.gif
-
-!/media/xmlconnect/original
-/media/xmlconnect/original/*
-!/media/xmlconnect/original/ok.gif
-
-!/media/xmlconnect/system
-/media/xmlconnect/system/*
-!/media/xmlconnect/system/ok.gif
-
+# Runtime / generated
+/generated/*
+!/generated/.htaccess
 /var/*
 !/var/.htaccess
+/pub/static/*
+!/pub/static/.htaccess
+/pub/media/*
+!/pub/media/.htaccess
 
-!/var/package
-/var/package/*
-!/var/package/*.xml
+# Environment-specific config (DB credentials, crypt key)
+/app/etc/env.php
 
+# Files deployed from magento/magento2-base by composer
+/dev/
+/lib/
+/setup/*
+!/setup/config/
+/setup/config/*
+!/setup/config/autoload/
+/setup/config/autoload/*
+!/setup/config/autoload/horobyna.global.php
+/phpserver/
+/pub/errors/
+/pub/opt/
+/pub/*.php
+/pub/.htaccess
+/pub/.user.ini
+/app/.htaccess
+/app/autoload.php
+/app/bootstrap.php
+/app/functions.php
+/app/etc/di.xml
+/app/etc/NonComposerComponentRegistration.php
+/app/etc/registration_globlist.php
+/app/etc/vendor_path.php
+/app/etc/db_schema.xml
+/bin/magento
+/bin/magerun
+/bin/.htaccess
+/.htaccess
+/.htaccess.sample
+/.user.ini
+/*.sample
+/CHANGELOG.md
+/COPYING.txt
+/LICENSE*.txt
+/SECURITY.md
+/.php-cs-fixer.dist.php
+/.editorconfig
+
+# Node / tooling
+/node_modules/
+/package.json
+/package-lock.json
+/Gruntfile.js
+/grunt-config.json
+
+# IDE / OS
+/.idea/
+.DS_Store

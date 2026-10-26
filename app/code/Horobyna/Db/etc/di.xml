@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PostgreSQL database adapter for Magento
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Framework\App\ResourceConnection\ConnectionAdapterInterface" type="Horobyna\Db\Model\ResourceModel\Type\Db\Pdo\Pgsql"/>
+    <preference for="Magento\Framework\DB\Adapter\SqlVersionProvider" type="Horobyna\Db\Adapter\SqlVersionProvider"/>
+    <preference for="Magento\Framework\Mview\TriggerCleaner" type="Horobyna\Db\Mview\TriggerCleaner"/>
+    <!-- "db" lock provider: advisory locks instead of GET_LOCK() -->
+    <preference for="Magento\Framework\Lock\Backend\Database" type="Horobyna\Db\Lock\Backend\Database"/>
+    <preference for="Magento\Framework\DB\Ddl\Sequence" type="Horobyna\Db\Ddl\Sequence"/>    <!-- Reset the connection late, like the MySQL adapter (matched by class hierarchy, which no longer includes it) -->
+    <type name="Magento\Framework\ObjectManager\Resetter\WeakMapSorter">
+        <arguments>
+            <argument name="sortOrder" xsi:type="array">
+                <item name="Horobyna\Db\Adapter\Pdo\Pgsql" xsi:type="number">9999</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Declarative schema -->
+    <preference for="Magento\Framework\Setup\Declaration\Schema\Db\DbSchemaReaderInterface" type="Horobyna\Db\Setup\Declaration\Schema\Db\DbSchemaReader"/>
+    <preference for="Magento\Framework\Setup\Declaration\Schema\Db\DbSchemaWriterInterface" type="Horobyna\Db\Setup\Declaration\Schema\Db\DbSchemaWriter"/>
+    <preference for="Magento\Framework\Setup\Declaration\Schema\Comparator" type="Horobyna\Db\Setup\Declaration\Schema\Comparator"/>
+    <virtualType name="Horobyna\Db\Setup\Declaration\Schema\Db\StatementFactory" type="Magento\Framework\Setup\Declaration\Schema\Db\StatementFactory">
+        <arguments>
+            <argument name="className" xsi:type="string">Horobyna\Db\Setup\Declaration\Schema\Db\Statement</argument>
+            <argument name="referenceClassName" xsi:type="string">Horobyna\Db\Setup\Declaration\Schema\Db\ReferenceStatement</argument>
+        </arguments>
+    </virtualType>
+    <type name="Horobyna\Db\Setup\Declaration\Schema\Db\DbSchemaWriter">
+        <arguments>
+            <argument name="statementFactory" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\StatementFactory</argument>
+        </arguments>
+    </type>
+    <!-- Replaces every MySQL definition processor -->
+    <type name="Magento\Framework\Setup\Declaration\Schema\Db\DefinitionAggregator">
+        <arguments>
+            <argument name="definitionProcessors" xsi:type="array">
+                <item name="boolean" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="int" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="smallint" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="tinyint" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="bigint" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="decimal" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="float" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="double" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="text" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="blob" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="mediumblob" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="longblob" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="mediumtext" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="longtext" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="datetime" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="date" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="timestamp" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="char" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="varchar" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="binary" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="varbinary" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="json" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="index" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="unique" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="primary" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="constraint" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+                <item name="reference" xsi:type="object">Horobyna\Db\Setup\Declaration\Schema\Db\DefinitionProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

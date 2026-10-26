@@ -1,0 +1,1 @@
+Architecture roadmap lives in docs/roadmap/. Before working on a task, read 00-overview.md and the phase doc for the task ID.

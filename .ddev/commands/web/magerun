@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+## Description: Run n98-magerun2 (bin/magerun) inside the web container
+## Usage: magerun [flags] [args]
+## Example: "ddev magerun sys:info" or "ddev magerun cache:flush" or "ddev magerun db:console"
+## ProjectTypes: magento2
+## ExecRaw: true
+## MutagenSync: true
+
+cd "${DDEV_COMPOSER_ROOT:-/var/www/html}" || exit 1
+
+if [ ! -f bin/magerun ]; then
+  echo 'bin/magerun does not exist in your project composer_root directory.'
+  exit 1
+fi
+
+php bin/magerun "$@"

@@ -1,0 +1,40 @@
+LOAD DATABASE
+  FROM      mysql://db:db@ddev-m2-db:3306/db
+  INTO      postgresql://db:db@ddev-m2-postgres:5432/db
+
+WITH include drop, create tables, create indexes, reset sequences,
+     foreign keys, workers = 4, concurrency = 2, prefetch rows = 10000
+
+CAST type tinyint when (= precision 1) to smallint drop typemod,
+     type bigint when unsigned to bigint drop typemod
+
+MATERIALIZE VIEWS inventory_stock_1
+
+EXCLUDING TABLE NAMES MATCHING ~/_cl$/, ~/_replica$/, ~/_tmp$/, ~/^search_tmp_/
+
+ALTER SCHEMA 'db' RENAME TO 'public'
+
+-- Index pairs whose names collide after 63-char truncation: which one survives
+-- depends on parallel build order, so drop the truncated survivor and recreate
+-- both members of each pair with short names.
+AFTER LOAD DO
+  $$ DO $do$
+     DECLARE r record;
+     BEGIN
+       FOR r IN SELECT indexname FROM pg_indexes
+                WHERE schemaname = 'public' AND length(indexname) = 63
+                  AND tablename IN ('eav_attribute_group', 'customer_address_entity_datetime',
+                                    'customer_address_entity_decimal', 'customer_address_entity_varchar')
+       LOOP
+         EXECUTE format('DROP INDEX public.%I', r.indexname);
+       END LOOP;
+     END
+     $do$; $$,
+  $$ CREATE UNIQUE INDEX eav_attr_group_set_code_uniq ON eav_attribute_group (attribute_set_id, attribute_group_code); $$,
+  $$ CREATE UNIQUE INDEX eav_attr_group_set_name_uniq ON eav_attribute_group (attribute_set_id, attribute_group_name); $$,
+  $$ CREATE UNIQUE INDEX cust_addr_datetime_entity_attr_uniq ON customer_address_entity_datetime (entity_id, attribute_id); $$,
+  $$ CREATE INDEX cust_addr_datetime_entity_attr_value_idx ON customer_address_entity_datetime (entity_id, attribute_id, value); $$,
+  $$ CREATE UNIQUE INDEX cust_addr_decimal_entity_attr_uniq ON customer_address_entity_decimal (entity_id, attribute_id); $$,
+  $$ CREATE INDEX cust_addr_decimal_entity_attr_value_idx ON customer_address_entity_decimal (entity_id, attribute_id, value); $$,
+  $$ CREATE UNIQUE INDEX cust_addr_varchar_entity_attr_uniq ON customer_address_entity_varchar (entity_id, attribute_id); $$,
+  $$ CREATE INDEX cust_addr_varchar_entity_attr_value_idx ON customer_address_entity_varchar (entity_id, attribute_id, value); $$;
